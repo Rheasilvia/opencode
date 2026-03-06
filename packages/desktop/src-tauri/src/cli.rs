@@ -75,6 +75,10 @@ pub struct CommandChild {
 }
 
 impl CommandChild {
+    pub fn new(kill: mpsc::Sender<()>) -> Self {
+        CommandChild { kill }
+    }
+
     pub fn kill(&self) -> std::io::Result<()> {
         self.kill
             .try_send(())

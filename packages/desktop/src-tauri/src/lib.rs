@@ -1,3 +1,4 @@
+mod browser;
 mod cli;
 mod constants;
 #[cfg(target_os = "linux")]
@@ -382,6 +383,7 @@ pub fn run() {
                 tracing::info!("Received Exit");
 
                 kill_sidecar(app.clone());
+                tokio::spawn(browser::kill_bridge(app.clone()));
             }
         });
 }
@@ -403,7 +405,10 @@ fn make_specta_builder() -> tauri_specta::Builder<tauri::Wry> {
             check_app_exists,
             wsl_path,
             resolve_app_path,
-            open_path
+            open_path,
+            browser::start_browser_bridge,
+            browser::stop_browser_bridge,
+            browser::get_bridge_status
         ])
         .events(tauri_specta::collect_events![
             LoadingWindowComplete,
@@ -442,6 +447,7 @@ async fn initialize(app: AppHandle) {
     let (server_ready_tx, server_ready_rx) = oneshot::channel();
     let server_ready_rx = server_ready_rx.shared();
     app.manage(ServerState::new(None, server_ready_rx.clone()));
+    app.manage(browser::BridgeState(Arc::new(Mutex::new(None))));
 
     let loading_window_complete = event_once_fut::<LoadingWindowComplete>(&app);
 
