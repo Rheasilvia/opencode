@@ -250,6 +250,10 @@ export const { use: useLayout, provider: LayoutProvider } = createSimpleContext(
         session: {
           width: DEFAULT_SESSION_WIDTH,
         },
+        browser: {
+          opened: false,
+          width: 480,
+        },
         mobileSidebar: {
           opened: false,
         },
@@ -686,6 +690,22 @@ export const { use: useLayout, provider: LayoutProvider } = createSimpleContext(
         },
         toggle() {
           setStore("mobileSidebar", "opened", (x) => !x)
+        },
+      },
+      browser: {
+        opened: createMemo(() => store.browser?.opened ?? false),
+        width: createMemo(() => store.browser?.width ?? 480),
+        open() {
+          setStore("browser", "opened", true)
+        },
+        close() {
+          setStore("browser", "opened", false)
+        },
+        toggle() {
+          setStore("browser", "opened", (x) => !x)
+        },
+        resize(w: number) {
+          setStore("browser", "width", w)
         },
       },
       pendingMessage: {

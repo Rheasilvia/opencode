@@ -1,15 +1,14 @@
-import { Show } from "solid-js"
+import { Show, onMount, onCleanup, createSignal } from "solid-js"
+import { connect, disconnect } from "@/lib/screencast"
 
 export type BrowserStatus = "disconnected" | "connecting" | "connected"
 
-export default function BrowserPanel(props: {
-  opened: boolean
-  width: number
-  status: BrowserStatus
-  onClose: () => void
-  onCanvas: (el: HTMLCanvasElement) => void
-}) {
-  const active = () => props.status ?? "disconnected"
+export default function BrowserPanel(props: { opened: boolean; width: number; onClose: () => void }) {
+  const [status, setStatus] = createSignal<BrowserStatus>("disconnected")
+  let el!: HTMLCanvasElement
+
+  onMount(() => connect(el, "ws://localhost:8765", setStatus))
+  onCleanup(disconnect)
 
   return (
     <Show when={props.opened}>
@@ -23,9 +22,9 @@ export default function BrowserPanel(props: {
             <div
               class="w-2 h-2 rounded-full"
               classList={{
-                "bg-red-500": active() === "disconnected",
-                "bg-yellow-500": active() === "connecting",
-                "bg-green-500": active() === "connected",
+                "bg-red-500": status() === "disconnected",
+                "bg-yellow-500": status() === "connecting",
+                "bg-green-500": status() === "connected",
               }}
             />
           </div>
@@ -39,8 +38,8 @@ export default function BrowserPanel(props: {
         </div>
 
         <div class="relative flex-1 w-full h-full overflow-hidden">
-          <canvas ref={props.onCanvas} style={{ width: "100%", height: "100%" }} class="block" />
-          <Show when={active() === "disconnected"}>
+          <canvas ref={el} style={{ width: "100%", height: "100%" }} class="block" />
+          <Show when={status() === "disconnected"}>
             <div class="absolute inset-0 flex items-center justify-center bg-background-base/80 z-10 backdrop-blur-sm">
               <span class="text-14-regular text-text-weak">Connect to Chrome to start browsing</span>
             </div>

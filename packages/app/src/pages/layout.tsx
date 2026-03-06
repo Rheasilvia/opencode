@@ -56,6 +56,7 @@ import { ConstrainDragXAxis } from "@/utils/solid-dnd"
 import { DialogSelectDirectory } from "@/components/dialog-select-directory"
 import { DialogEditProject } from "@/components/dialog-edit-project"
 import { Titlebar } from "@/components/titlebar"
+import BrowserPanel from "@/components/browser-panel"
 import { useServer } from "@/context/server"
 import { useLanguage, type Locale } from "@/context/language"
 import {
@@ -2172,6 +2173,7 @@ export default function Layout(props: ParentProps) {
             {props.children}
           </Show>
         </main>
+        <BrowserPanel opened={layout.browser.opened()} width={layout.browser.width()} onClose={layout.browser.close} />
       </div>
       <Toast.Region />
     </div>
