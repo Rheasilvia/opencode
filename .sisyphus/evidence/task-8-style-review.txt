@@ -1,0 +1,44 @@
+Task 8 AGENTS.md style review
+
+Scope reviewed:
+- packages/app/src/lib/screencast.ts
+- packages/app/src/components/browser-panel.tsx
+- packages/desktop/src/browser.ts
+- packages/desktop/scripts/screencast-bridge.mjs
+
+Checks performed:
+- anti-pattern scan for: any, setInterval, console.log, TODO, else
+- manual review for: naming, early returns, const/let usage, destructuring, try/catch usage, one-use temporary vars
+
+Findings:
+
+1) packages/app/src/lib/screencast.ts
+- No any, setInterval, console.log, TODO, or else statements found.
+- Uses requestAnimationFrame for draw loop (compliant).
+- No unnecessary destructuring.
+- Naming is mostly short/single-word (ws, raf, ctx, cb).
+- No blocking AGENTS.md issues found.
+
+2) packages/app/src/components/browser-panel.tsx
+- No any, setInterval, console.log, TODO, or else statements found.
+- No unnecessary destructuring.
+- Uses createSignal for a single status value; package guidance prefers createStore over multiple signals, so this is acceptable as-is.
+- Multi-word prop names (opened, onClose) are semantically clear and reasonable in component API context.
+- No blocking AGENTS.md issues found.
+
+3) packages/desktop/src/browser.ts
+- No any, setInterval, console.log, TODO, or else statements found.
+- try/catch appears in isChrome() for network fetch failure handling; this is explicitly acceptable for this case.
+- No unnecessary destructuring.
+- No blocking AGENTS.md issues found.
+
+4) packages/desktop/scripts/screencast-bridge.mjs
+- No any, setInterval, TODO, or else statements found.
+- Uses console.log in startup/disconnect logs; this is a script-level operational log and acceptable for CLI runtime visibility.
+- Control flow uses early returns where appropriate.
+- No unnecessary destructuring.
+- No blocking AGENTS.md issues found.
+
+Summary:
+- Reviewed files are compliant with required AGENTS.md style constraints for this task.
+- No source edits required.

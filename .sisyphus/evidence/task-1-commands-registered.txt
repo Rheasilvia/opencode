@@ -1,0 +1,61 @@
+# Commands Registration Evidence
+
+## Registered Commands in make_specta_builder()
+
+Line 392-410 in lib.rs:
+
+.commands(tauri_specta::collect_commands![
+    kill_sidecar,
+    cli::install_cli,
+    await_initialization,
+    server::get_default_server_url,
+    server::set_default_server_url,
+    server::get_wsl_config,
+    server::set_wsl_config,
+    get_display_backend,
+    set_display_backend,
+    markdown::parse_markdown_command,
+    check_app_exists,
+    wsl_path,
+    resolve_app_path,
+    open_path,
+    browser::start_browser_bridge,      ✅ REGISTERED
+    browser::stop_browser_bridge,       ✅ REGISTERED
+    browser::get_bridge_status          ✅ REGISTERED
+])
+
+## Command Definitions
+
+### browser::start_browser_bridge
+- Location: packages/desktop/src-tauri/src/browser.rs:11-58
+- Signature: async fn start_browser_bridge(state: State<'_, BridgeState>, cdp_port: u16, ws_port: u16) -> Result<(), String>
+- Annotations: #[tauri::command] #[specta::specta] ✅
+- Spawns: node packages/desktop/scripts/screencast-bridge.mjs
+- Returns: Result<(), String>
+
+### browser::stop_browser_bridge
+- Location: packages/desktop/src-tauri/src/browser.rs:61-72
+- Signature: async fn stop_browser_bridge(state: State<'_, BridgeState>) -> Result<(), String>
+- Annotations: #[tauri::command] #[specta::specta] ✅
+- Kills: Bridge process via CommandChild.kill()
+- Returns: Result<(), String>
+
+### browser::get_bridge_status
+- Location: packages/desktop/src-tauri/src/browser.rs:74-82
+- Signature: fn get_bridge_status(state: State<'_, BridgeState>) -> bool
+- Annotations: #[tauri::command] #[specta::specta] ✅
+- Returns: bool (true if bridge is running, false otherwise)
+
+## State Registration
+
+Line 449 in lib.rs:
+app.manage(browser::BridgeState(Arc::new(Mutex::new(None))));
+
+✅ BridgeState properly registered in app initialization
+
+## Exit Handler Integration
+
+Line 385 in lib.rs:
+tokio::spawn(browser::kill_bridge(app.clone()));
+
+✅ kill_bridge() called on app exit to clean up resources

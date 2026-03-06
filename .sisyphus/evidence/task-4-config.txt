@@ -1,0 +1,6 @@
+    "externalBin": ["sidecars/opencode-cli", "scripts/screencast-bridge"],
+    "linux": {
+      "rpm": {
+        "compression": {
+          "type": "none"
+        }
