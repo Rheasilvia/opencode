@@ -280,6 +280,34 @@ export function Titlebar() {
         data-tauri-drag-region
         onMouseDown={drag}
       >
+        <TooltipKeybind
+          class="hidden xl:flex shrink-0 mr-2"
+          placement="bottom"
+          title="Toggle Browser"
+          keybind={command.keybind("browser.toggle")}
+        >
+          <Button
+            variant="ghost"
+            class="group/browser-toggle titlebar-icon w-8 h-6 p-0 box-border"
+            onClick={layout.browser.toggle}
+            aria-label="Toggle Browser"
+            aria-expanded={layout.browser.opened()}
+          >
+            <div class="relative flex items-center justify-center size-4 [&>*]:absolute [&>*]:inset-0">
+              <Icon
+                size="small"
+                name={layout.browser.opened() ? "layout-right-partial" : "layout-right"}
+                class="group-hover/browser-toggle:hidden"
+              />
+              <Icon size="small" name="layout-right-partial" class="hidden group-hover/browser-toggle:inline-block" />
+              <Icon
+                size="small"
+                name={layout.browser.opened() ? "layout-right" : "layout-right-partial"}
+                class="hidden group-active/browser-toggle:inline-block"
+              />
+            </div>
+          </Button>
+        </TooltipKeybind>
         <div id="opencode-titlebar-right" class="flex items-center gap-1 shrink-0 justify-end" />
         <Show when={windows()}>
           <div class="w-6 shrink-0" />

@@ -1,7 +1,7 @@
 import { commands } from "./bindings"
 
 const CDP_PORT = 9222
-const WS_PORT = 8765
+export const WS_PORT = 8765
 
 export async function isChrome(port = CDP_PORT): Promise<boolean> {
   try {

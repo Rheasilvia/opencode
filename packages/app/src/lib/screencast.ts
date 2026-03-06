@@ -5,7 +5,6 @@ let raf: number | null = null
 let canvas: HTMLCanvasElement | null = null
 let ctx: CanvasRenderingContext2D | null = null
 let pending: ImageBitmap | null = null
-let cb: ((s: BrowserStatus) => void) | null = null
 
 function draw() {
   if (!canvas || !ctx) return
@@ -19,21 +18,20 @@ function draw() {
   raf = requestAnimationFrame(draw)
 }
 
-export function connect(el: HTMLCanvasElement, url: string, onStatus: (s: BrowserStatus) => void) {
+export function connect(el: HTMLCanvasElement, url: string, cb: (s: BrowserStatus) => void) {
   canvas = el
   ctx = el.getContext("2d")
-  cb = onStatus
-  onStatus("connecting")
+  cb("connecting")
 
   ws = new WebSocket(url)
 
-  ws.onopen = () => onStatus("connected")
+  ws.onopen = () => cb("connected")
   ws.onclose = () => {
-    onStatus("disconnected")
+    cb("disconnected")
     ws = null
   }
   ws.onerror = () => {
-    onStatus("disconnected")
+    cb("disconnected")
     ws = null
   }
 
@@ -63,5 +61,4 @@ export function disconnect() {
   pending = null
   canvas = null
   ctx = null
-  cb = null
 }
